@@ -101,7 +101,7 @@
       try {
         chkTerms.checked = localStorage.getItem(LS_TERMS) === "1";
         chkPolicies.checked = localStorage.getItem(LS_POLICIES) === "1";
-      } catch (_)
+      } } catch (_) {}
 
       function updateState() {
         const ok = chkTerms.checked && chkPolicies.checked;
