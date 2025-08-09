@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MSD — Consentimiento</title>
 
-  <!-- Favicon (usa tu PNG como icono; si luego generas un .ico multiplataforma, cámbialo aquí) -->
   <link rel="icon" type="image/png" sizes="32x32" href="MSD_logo.png" />
   <link rel="apple-touch-icon" href="MSD_logo.png" />
   <meta name="theme-color" content="#ffffff" />
@@ -52,7 +51,6 @@
 
   <main class="card" role="main" aria-labelledby="titulo">
     <div class="brand">
-      <!-- Muestra PNG si existe; si no, hace fallback al JPG -->
       <picture>
         <source srcset="MSD_logo.png" type="image/png" />
         <img src="logo-msd.jpg" alt="MSD" height="40" />
@@ -100,11 +98,10 @@
       const live = document.getElementById("live");
       const form = document.getElementById("consent-form");
 
-      // Precarga desde localStorage
       try {
         chkTerms.checked = localStorage.getItem(LS_TERMS) === "1";
         chkPolicies.checked = localStorage.getItem(LS_POLICIES) === "1";
-      } catch (_) { /* sin bloqueo si el navegador no permite LS */ }
+      } catch (_)
 
       function updateState() {
         const ok = chkTerms.checked && chkPolicies.checked;
@@ -125,14 +122,12 @@
       });
 
       form.addEventListener("submit", (e) => {
-        // Sustituye este bloque por tu flujo real (redirección, fetch, etc.)
+
         e.preventDefault();
         if (btn.disabled) return;
 
-        // Marca una huella temporal de aceptación (auditoría básica del lado cliente)
         try { localStorage.setItem("msd.consent_ts", new Date().toISOString()); } catch (_) {}
 
-        // TODO: redirige a tu home/dashboard
         // window.location.href = "/home";
         alert("Consentimiento registrado.");
       });
