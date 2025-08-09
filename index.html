@@ -88,52 +88,50 @@
   </main>
 
   <script>
-    (function () {
-      const LS_TERMS = "msd.accepted_terms";
-      const LS_POLICIES = "msd.accepted_policies";
+  (function () {
+    const LS_TERMS = "msd.accepted_terms";
+    const LS_POLICIES = "msd.accepted_policies";
 
-      const chkTerms = document.getElementById("chk-terms");
-      const chkPolicies = document.getElementById("chk-policies");
-      const btn = document.getElementById("btn-continue");
-      const live = document.getElementById("live");
-      const form = document.getElementById("consent-form");
+    const chkTerms = document.getElementById("chk-terms");
+    const chkPolicies = document.getElementById("chk-policies");
+    const btn = document.getElementById("btn-continue");
+    const live = document.getElementById("live");
+    const form = document.getElementById("consent-form");
 
-      try {
-        chkTerms.checked = localStorage.getItem(LS_TERMS) === "1";
-        chkPolicies.checked = localStorage.getItem(LS_POLICIES) === "1";
-      } } catch (_) {}
+    try {
+      chkTerms.checked = localStorage.getItem(LS_TERMS) === "1";
+      chkPolicies.checked = localStorage.getItem(LS_POLICIES) === "1";
+    } catch (_) {}
 
-      function updateState() {
-        const ok = chkTerms.checked && chkPolicies.checked;
-        btn.disabled = !ok;
-        live.textContent = ok
-          ? "Listo para continuar."
-          : "Debes aceptar ambos documentos para continuar.";
-      }
+    function updateState() {
+      const ok = chkTerms.checked && chkPolicies.checked;
+      btn.disabled = !ok;
+      live.textContent = ok
+        ? "Listo para continuar."
+        : "Debes aceptar ambos documentos para continuar.";
+    }
 
-      chkTerms.addEventListener("change", () => {
-        try { localStorage.setItem(LS_TERMS, chkTerms.checked ? "1" : "0"); } catch (_) {}
-        updateState();
-      });
-
-      chkPolicies.addEventListener("change", () => {
-        try { localStorage.setItem(LS_POLICIES, chkPolicies.checked ? "1" : "0"); } catch (_) {}
-        updateState();
-      });
-
-      form.addEventListener("submit", (e) => {
-
-        e.preventDefault();
-        if (btn.disabled) return;
-
-        try { localStorage.setItem("msd.consent_ts", new Date().toISOString()); } catch (_) {}
-
-        // window.location.href = "/home";
-        alert("Consentimiento registrado.");
-      });
-
+    chkTerms.addEventListener("change", () => {
+      try { localStorage.setItem(LS_TERMS, chkTerms.checked ? "1" : "0"); } catch (_) {}
       updateState();
-    })();
-  </script>
+    });
+
+    chkPolicies.addEventListener("change", () => {
+      try { localStorage.setItem(LS_POLICIES, chkPolicies.checked ? "1" : "0"); } catch (_) {}
+      updateState();
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (btn.disabled) return;
+      try { localStorage.setItem("msd.consent_ts", new Date().toISOString()); } catch (_) {}
+      // window.location.href = "/home";
+      alert("Consentimiento registrado.");
+    });
+
+    updateState();
+  })();
+</script>
+
 </body>
 </html>
