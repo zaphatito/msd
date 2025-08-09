@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MSD — Consentimiento</title>
+
+  <!-- Favicon (usa tu PNG como icono; si luego generas un .ico multiplataforma, cámbialo aquí) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="MSD_logo.png" />
+  <link rel="apple-touch-icon" href="MSD_logo.png" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <style>
+    :root { --bg:#f6f7f9; --card:#ffffff; --text:#0b1f33; --muted:#6b7a90; --brand:#008080; }
+    * { box-sizing: border-box; }
+    html,body { height: 100%; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      background: radial-gradient(1200px 600px at 20% 0%, #eef4ff 0%, var(--bg) 60%);
+      color: var(--text); display: grid; place-items: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 520px; background: var(--card); border: 1px solid #e6ebf2; border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(11,31,51,0.06); padding: 28px 24px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 8px;
+    }
+    .brand img { height: 40px; width: auto; display: block; }
+    .brand small { color: var(--muted); }
+    h1 { font-size: 20px; margin: 10px 0 18px; line-height: 1.25; }
+    .checks { display: grid; gap: 14px; margin: 12px 0 8px; }
+    label {
+      display: grid; grid-template-columns: 24px 1fr; gap: 10px; align-items: start;
+      padding: 10px 12px; border: 1px solid #e6ebf2; border-radius: 10px; background: #fafbff;
+    }
+    input[type="checkbox"] { margin: 3px 0 0; width: 18px; height: 18px; }
+    a { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; }
+    .actions { margin-top: 18px; display: grid; gap: 10px; }
+    button {
+      width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid transparent;
+      background: var(--brand); color: #fff; font-weight: 600; cursor: pointer;
+    }
+    button[disabled] { background: #c3d6d6; cursor: not-allowed; }
+    .helper { color: var(--muted); font-size: 12px; }
+    .sr-live { position: relative; min-height: 1em; }
+    .sr-live [aria-live] { position: absolute; left: -9999px; }
+    .footnote { margin-top: 4px; font-size: 12px; color: var(--muted); text-align: center; }
+  </style>
+</head>
+<body>
+
+  <main class="card" role="main" aria-labelledby="titulo">
+    <div class="brand">
+      <!-- Muestra PNG si existe; si no, hace fallback al JPG -->
+      <picture>
+        <source srcset="MSD_logo.png" type="image/png" />
+        <img src="logo-msd.jpg" alt="MSD" height="40" />
+      </picture>
+      <small>Portal de acceso</small>
+    </div>
+
+    <h1 id="titulo">Confirmación de consentimiento</h1>
+    <p class="helper">
+      Para continuar, confirma que aceptas los documentos corporativos. Los enlaces se abren en una pestaña nueva.
+    </p>
+
+    <form id="consent-form" action="#" method="post" novalidate>
+      <div class="checks">
+        <label for="chk-terms">
+          <input id="chk-terms" name="terms" type="checkbox" required />
+          <span>Acepto los <a href="https://www.corporativo.msd.com.pe/terminos-y-condiciones-de-uso"
+              target="_blank" rel="noopener noreferrer">Términos y Condiciones de Uso</a>.</span>
+        </label>
+
+        <label for="chk-policies">
+          <input id="chk-policies" name="policies" type="checkbox" required />
+          <span>Acepto las <a href="https://www.corporativo.msd.com.pe/acerca-de-nuestra-empresa/policies-positions"
+              target="_blank" rel="noopener noreferrer">Políticas y Posiciones</a>.</span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button id="btn-continue" type="submit" disabled>Continuar</button>
+        <div class="sr-live"><span id="live" aria-live="polite"></span></div>
+        <div class="footnote">Guardamos tu preferencia localmente para optimizar fricción en próximos accesos.</div>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    (function () {
+      const LS_TERMS = "msd.accepted_terms";
+      const LS_POLICIES = "msd.accepted_policies";
+
+      const chkTerms = document.getElementById("chk-terms");
+      const chkPolicies = document.getElementById("chk-policies");
+      const btn = document.getElementById("btn-continue");
+      const live = document.getElementById("live");
+      const form = document.getElementById("consent-form");
+
+      // Precarga desde localStorage
+      try {
+        chkTerms.checked = localStorage.getItem(LS_TERMS) === "1";
+        chkPolicies.checked = localStorage.getItem(LS_POLICIES) === "1";
+      } catch (_) { /* sin bloqueo si el navegador no permite LS */ }
+
+      function updateState() {
+        const ok = chkTerms.checked && chkPolicies.checked;
+        btn.disabled = !ok;
+        live.textContent = ok
+          ? "Listo para continuar."
+          : "Debes aceptar ambos documentos para continuar.";
+      }
+
+      chkTerms.addEventListener("change", () => {
+        try { localStorage.setItem(LS_TERMS, chkTerms.checked ? "1" : "0"); } catch (_) {}
+        updateState();
+      });
+
+      chkPolicies.addEventListener("change", () => {
+        try { localStorage.setItem(LS_POLICIES, chkPolicies.checked ? "1" : "0"); } catch (_) {}
+        updateState();
+      });
+
+      form.addEventListener("submit", (e) => {
+        // Sustituye este bloque por tu flujo real (redirección, fetch, etc.)
+        e.preventDefault();
+        if (btn.disabled) return;
+
+        // Marca una huella temporal de aceptación (auditoría básica del lado cliente)
+        try { localStorage.setItem("msd.consent_ts", new Date().toISOString()); } catch (_) {}
+
+        // TODO: redirige a tu home/dashboard
+        // window.location.href = "/home";
+        alert("Consentimiento registrado. Implementa aquí tu redirección.");
+      });
+
+      updateState();
+    })();
+  </script>
+</body>
+</html>
